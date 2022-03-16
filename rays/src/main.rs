@@ -6,8 +6,6 @@ use rays::*;
 const WINDOW_NAME: &str = "RayTracer";
 
 
-
-
 fn main() {
     let toml = std::fs::read_to_string("../scene.toml").unwrap();
     let raytracer = RayTracer::from_description(&toml).unwrap();

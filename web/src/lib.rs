@@ -25,16 +25,21 @@ impl Component for App {
 
     fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
         self.scene = msg;
+        web_sys::console::log_1(&format!("new scene: {}", self.scene).into());
         true
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
-        let oncompile = ctx.link().callback(|s| s);
+        let oncompile = ctx.link().callback(|s| {
+            //web_sys::console::log_1(&"COIMPIEL".into());
+            s
+        });
+        web_sys::console::log_1(&"RERENDERED".into());
         html! {
             <>
                <div class="mainbox">
-                    <Description rows=40 cols=30 default_scene={self.scene.clone()} {oncompile}/>
-                    <Render width=500 height=500 scene_desc={self.scene.clone()} />
+                    <Description rows=40 cols=30 default_scene={self.scene.clone()} oncompile={oncompile}/>
+                    <Render width=800 height=800 scene_desc={self.scene.clone()} />
                </div> 
             </>
         }

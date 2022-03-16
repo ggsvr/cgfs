@@ -22,6 +22,7 @@ pub struct Render {
 }
 
 fn render(scene_desc: &str, canvas_width: u32, canvas_height: u32) -> Result<ImageData, String> {
+    web_sys::console::log_1(&format!("scene_desc: {scene_desc}").into());
     let mut rt = RayTracer::from_description(scene_desc)?;
     let img = image::imageops::resize(
         rt.render(),
@@ -50,25 +51,28 @@ fn render(scene_desc: &str, canvas_width: u32, canvas_height: u32) -> Result<Ima
     })
 }
 
+
 impl Component for Render {
     type Properties = RenderProps;
-    type Message = RenderMsg; 
+    type Message = (); 
 
 
     fn create(ctx: &Context<Self>) -> Self {
-        let toml = &ctx.props().scene_desc;
+        //let toml = &ctx.props().scene_desc;
         let (width, height) = (ctx.props().width, ctx.props().height);
         Self {
-            img_data: render(toml, width, height),
+            //img_data: render(toml, width, height),
+            img_data: render(&ctx.props().scene_desc, ctx.props().width, ctx.props().height),
             canvas: NodeRef::default(),
         }
     }
 
-    fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
-        false
-    }
+
     fn rendered(&mut self, ctx: &Context<Self>, first_render: bool) {
         //if !first_render {return}
+        self.img_data = render(&ctx.props().scene_desc, ctx.props().width, ctx.props().height);
+
+
         let data = match &self.img_data {
             Ok(i) => i,
             Err(_) => return,
@@ -81,17 +85,19 @@ impl Component for Render {
         canvas.set_width(data.width());
         canvas.set_height(data.height());
 
-        let ctx: CanvasRenderingContext2d = canvas
+        let img_ctx: CanvasRenderingContext2d = canvas
             .get_context("2d")
             .unwrap()
             .unwrap()
             .dyn_into()
             .unwrap();
 
-        ctx.put_image_data(data, 0., 0.).unwrap();
+        img_ctx.put_image_data(data, 0., 0.).unwrap();
+        web_sys::console::log_1(&"RENDER".into());
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
+        web_sys::console::log_1(&"RENDERVIEW".into());
         if let Err(e) = &self.img_data {
             html! {
                 <div>{e}</div>

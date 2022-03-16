@@ -101,8 +101,8 @@ impl FromToml for Camera {
             Ok(Camera {
                 position,
                 rot_x: rotation[0],
-                rot_y: rotation[0],
-                rot_z: rotation[0],
+                rot_y: rotation[1],
+                rot_z: rotation[2],
             })
         })
     }
